@@ -126,8 +126,6 @@ onUnmounted(() => {
 .cart-footer {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 40vh;
   text-align: center;
 }
 .cart-product {

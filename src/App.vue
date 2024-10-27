@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import Home from './components/Home.vue'
-import Nav from './components/common/Nav.vue'
-import SideBar from './components/common/SideBar.vue'
+import Home from './views/HomeView.vue'
+import Loader from './components/common/Loader.vue'
 </script>
 
 <template>
-  <Nav />
-  <SideBar />
-  <Home />
+  <Suspense>
+    <template #fallback>
+      <Loader />
+    </template>
+    <template #default>
+      <Home />
+    </template>
+  </Suspense>
 </template>

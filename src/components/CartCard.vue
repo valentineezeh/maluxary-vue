@@ -41,8 +41,6 @@ const handleRemoveFromCart = (product: ProductTypes) => {
 .cart-footer {
   display: flex;
   justify-content: space-between;
-  position: relative;
-  top: 20px;
   margin: 20px;
 }
 .counter-container {
