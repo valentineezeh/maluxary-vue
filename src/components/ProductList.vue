@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import Product from './Product.vue'
 import { useStore } from '../stores'
 
+
 const store = useStore()
 const { searchResults } = storeToRefs(store)
+
+onMounted(async () => {
+  const cachedProd = await store.getProductsFromCache()
+  if (cachedProd.length === 0) {
+    store.initializeStore()
+  }
+})
 </script>
 
 <template>

@@ -13,6 +13,8 @@ const { removeFromCart } = store
 const handleRemoveFromCart = (product: ProductTypes) => {
   removeFromCart(product)
 }
+
+console.log('prop.product >>> ', props.product)
 </script>
 
 <template>

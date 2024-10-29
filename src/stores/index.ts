@@ -1,16 +1,92 @@
 import { ref, computed, reactive } from 'vue'
 import { defineStore } from 'pinia'
-import { data } from '../utils'
+import axios from 'axios'
 import type { ProductTypes, Store } from '@/types'
+import { indexedDBService } from '@/service'
+
+const baseUrl = 'https://pangaea-interviews.now.sh'
 
 export const useStore = defineStore('store', () => {
   const state = reactive<Store>({
-    products: data,
+    products: [],
     cart: [],
   })
 
   const showSidePanel = ref(false)
   const searchValue = ref('')
+  const isLoading = ref(false)
+  const error = ref('')
+
+  const initializeStore = async() => {
+    console.log('>>> i got call in the initialize store <<<')
+    try {
+      // open the index DB
+      await indexedDBService.openDB();
+      await fetchProducts()
+
+      await indexedDBService.saveProducts(state.products)
+    } catch(err){
+      console.error('Failed to initialize store ', err)
+      error.value = 'Failed to initialize store'
+    }
+  }
+
+  const getProductsFromCache = async () => {
+    try {
+      const products = await indexedDBService.getProducts()
+      return state.products = products
+    } catch(err){
+      console.error('Failed to get products ', err)
+      error.value = 'Failed to get products'
+    }
+  }
+
+  const getCartFromCache = async () => {
+    try {
+      const cart = await indexedDBService.getCartProducts()
+      state.cart = [...cart]
+    } catch(err){
+      console.error('Failed to get cart ', err)
+      error.value = 'Failed to get cart'
+    }
+  }
+
+  const fetchProductsFromApi = async() => {
+    try {
+      const res = await axios({
+        url: `${baseUrl}/api/graphql`,
+        method: "post",
+        data: {
+          query: `
+        query {
+          products {
+            id
+            title
+            image_url
+            price(currency: USD)
+          }
+        }
+        `,
+        },
+      });
+      return res.data
+    } catch(error){
+      return error
+    }
+  }
+
+  const fetchProducts = async() => {
+    isLoading.value = true;
+    try {
+      const products = await fetchProductsFromApi();
+      state.products = products.data.products
+    } catch(err) {
+      error.value = 'Failed to fetch products';
+      console.log('err >>> ', err)
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   const addToCart = (product: ProductTypes) => {
     const existingItem = state.cart.find(item => item.id === product.id)
@@ -23,11 +99,17 @@ export const useStore = defineStore('store', () => {
     updateCartTotal()
   }
 
-  const updateCartTotal = () => {
-    state.cart.reduce(
-      (total, item) => total + item.unitPrice * item.quantity,
-      0,
-    )
+  const updateCartTotal = async () => {
+    try {// open the index DB
+      await indexedDBService.openDB();
+      state.cart.reduce(
+        (total, item) => total + item.unitPrice * item.quantity,
+        0,
+      )
+      await indexedDBService.saveCartProducts(state.cart)
+    } catch(error) {
+      console.log('something went wrong', error)
+    }
   }
 
   const cartSubtotal = computed(() => {
@@ -41,15 +123,16 @@ export const useStore = defineStore('store', () => {
     return state.cart.reduce((count, item) => count + item.quantity, 0)
   })
 
-  const removeFromCart = (product: ProductTypes) => {
+  const removeFromCart = async (product: ProductTypes) => {
     const index = state.cart.findIndex(item => item.id === product.id)
     if (index !== -1) {
+      await indexedDBService.deleteItemFromCart(product.id)
       state.cart.splice(index, 1)
       updateCartTotal()
     }
   }
 
-  const decrementFromCart = (product: ProductTypes) => {
+  const decrementFromCart = async (product: ProductTypes) => {
     state.cart.map(item => {
       if (item.id === product.id) {
         item.quantity -= 1
@@ -78,6 +161,10 @@ export const useStore = defineStore('store', () => {
     )
   })
 
+  const getCart = computed(() => {
+    return state.cart
+  })
+
   return {
     ...state,
     addToCart,
@@ -90,5 +177,9 @@ export const useStore = defineStore('store', () => {
     searchResults,
     searchValue,
     setSearchQuery,
+    initializeStore,
+    getProductsFromCache,
+    getCartFromCache,
+    getCart
   }
 })

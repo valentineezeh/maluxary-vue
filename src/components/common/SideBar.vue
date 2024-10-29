@@ -12,7 +12,7 @@ import { useStore } from '@/stores'
 const sidePanelRef = ref<HTMLElement | null>(null)
 
 const store = useStore()
-const { cart, setSidePanel } = store
+const { setSidePanel } = store
 const { showSidePanel } = storeToRefs(store)
 
 const handleClickOutside = (event: MouseEvent) => {
@@ -40,7 +40,10 @@ watch(showSidePanel, newValue => {
 //   console.log('cart >>> ', newValue)
 // })
 
-onMounted(() => {
+console.log('cart >>>> ', store.cart)
+
+onMounted(async () => {
+  await store.getCartFromCache()
   document.addEventListener('mousedown', handleClickOutside)
   toggleBodyScroll(showSidePanel.value)
 })
@@ -66,7 +69,7 @@ onUnmounted(() => {
             <option>NGN</option>
           </select>
         </div>
-        <div class="cart-product" v-for="item in cart" :key="item.id">
+        <div class="cart-product" v-for="item in store.getCart" :key="item.id">
           <CartCard :product="item" />
         </div>
         <div class="cart-footer">
