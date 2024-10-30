@@ -16,9 +16,9 @@ export const useStore = defineStore('store', () => {
   const searchValue = ref('')
   const isLoading = ref(false)
   const error = ref('')
+  const currentCurrency = ref('USD')
 
   const initializeStore = async() => {
-    console.log('>>> i got call in the initialize store <<<')
     try {
       // open the index DB
       await indexedDBService.openDB();
@@ -63,7 +63,7 @@ export const useStore = defineStore('store', () => {
             id
             title
             image_url
-            price(currency: USD)
+            price(currency: ${currentCurrency.value})
           }
         }
         `,
@@ -82,7 +82,7 @@ export const useStore = defineStore('store', () => {
       state.products = products.data.products
     } catch(err) {
       error.value = 'Failed to fetch products';
-      console.log('err >>> ', err)
+      console.error(err)
     } finally {
       isLoading.value = false;
     }
@@ -100,7 +100,8 @@ export const useStore = defineStore('store', () => {
   }
 
   const updateCartTotal = async () => {
-    try {// open the index DB
+    try {
+      // open the index DB
       await indexedDBService.openDB();
       state.cart.reduce(
         (total, item) => total + item.unitPrice * item.quantity,
@@ -108,7 +109,7 @@ export const useStore = defineStore('store', () => {
       )
       await indexedDBService.saveCartProducts(state.cart)
     } catch(error) {
-      console.log('something went wrong', error)
+      console.error('something went wrong', error)
     }
   }
 
@@ -165,6 +166,54 @@ export const useStore = defineStore('store', () => {
     return state.cart
   })
 
+  const changeCurrency = async(newCurrency: string) => {
+    if(newCurrency === currentCurrency.value) return
+    currentCurrency.value = newCurrency
+    await updatePrices(newCurrency)
+  }
+
+  const updatePrices = async(newCurrency: string) => {
+    isLoading.value = true;
+
+    try {
+      const res = await axios({
+        url: `${baseUrl}/api/graphql`,
+        method: 'post',
+        data: {
+          query: `
+            query {
+              products {
+                id
+                price(currency: ${newCurrency})
+              }
+            }
+          `,
+        }
+      });
+
+      // update prices in the product array
+      const newPrices = res.data.data.products;
+      state.products = state.products.map(prod => {
+        const newPrice = newPrices.find((p: ProductTypes) => p.id === prod.id);
+        return { ...prod, price: newPrice.price };
+      })
+
+      // update prices in the cart items
+      state.cart = state.cart.map(item => {
+        const newPrice = newPrices.find((p: ProductTypes) => p.id === item.id)
+        if(newPrice) {
+          return {...item, price: newPrice.price * item.quantity, unitPrice: newPrice.price}
+        }
+        return item
+      })
+    } catch(err) {
+      error.value = 'Failed to update prices';
+      console.error('Failed to update prices:', err);
+    } finally {
+      isLoading.value = false
+  }
+}
+
   return {
     ...state,
     addToCart,
@@ -180,6 +229,8 @@ export const useStore = defineStore('store', () => {
     initializeStore,
     getProductsFromCache,
     getCartFromCache,
-    getCart
+    getCart,
+    changeCurrency,
+    currentCurrency
   }
 })

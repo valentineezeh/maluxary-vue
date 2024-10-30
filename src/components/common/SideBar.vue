@@ -13,7 +13,7 @@ const sidePanelRef = ref<HTMLElement | null>(null)
 
 const store = useStore()
 const { setSidePanel } = store
-const { showSidePanel } = storeToRefs(store)
+const { showSidePanel, currentCurrency } = storeToRefs(store)
 
 const handleClickOutside = (event: MouseEvent) => {
   if (
@@ -40,7 +40,10 @@ watch(showSidePanel, newValue => {
 //   console.log('cart >>> ', newValue)
 // })
 
-console.log('cart >>>> ', store.cart)
+const handleCurrencyChange = (event: Event) => {
+  const select = event.target as HTMLSelectElement
+  store.changeCurrency(select.value)
+}
 
 onMounted(async () => {
   await store.getCartFromCache()
@@ -63,10 +66,11 @@ onUnmounted(() => {
           <h4>YOUR CART</h4>
         </div>
         <div class="currency-selector-container">
-          <select>
-            <option>USD</option>
-            <option>CAD</option>
-            <option>NGN</option>
+          <select :value="currentCurrency" @change="handleCurrencyChange" :disabled="store.isLoading"
+          >
+            <option value="USD">USD</option>
+            <option value="CAD">CAD</option>
+            <option value="NGN">NGN</option>
           </select>
         </div>
         <div class="cart-product" v-for="item in store.getCart" :key="item.id">
