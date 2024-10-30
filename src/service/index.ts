@@ -4,6 +4,7 @@ const DB_NAME = 'maluxaryDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'products';
 const CART_NAME = 'carts'
+const CURRENCY_NAME = 'currency'
 
 export const indexedDBService = {
   db: null as IDBDatabase | null,
@@ -31,6 +32,9 @@ export const indexedDBService = {
         }
         if (!db.objectStoreNames.contains(CART_NAME)) {
           db.createObjectStore(CART_NAME, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(CURRENCY_NAME)) {
+          db.createObjectStore(CURRENCY_NAME);
         }
       };
     });
@@ -163,5 +167,44 @@ export const indexedDBService = {
         reject(request.error);
       };
     });
+    },
+
+  async saveCurrency(currency: string) {
+    if (!this.db) {
+    await this.openDB();
+  }
+  return new Promise<void>((resolve, reject) => {
+    const transaction = this.db!.transaction(CURRENCY_NAME, 'readwrite');
+    const store = transaction.objectStore(CURRENCY_NAME);
+    store.put(currency, 'currency');
+
+    transaction.oncomplete = () => {
+      resolve();
+    };
+
+    transaction.onerror = () => {
+      reject(transaction.error);
+    };
+  })
+  },
+
+  async getCurrency(): Promise<string> {
+    if(!this.db) {
+      await this.openDB();
     }
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(CURRENCY_NAME, 'readonly');
+      const store = transaction.objectStore(CURRENCY_NAME);
+      const request = store.get('currency');
+
+      request.onsuccess = () => {
+        resolve(request.result || 'USD');
+      };
+
+      request.onerror = () => {
+        reject(request.error);
+      };
+    })
+  }
   }

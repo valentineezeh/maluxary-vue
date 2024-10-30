@@ -25,6 +25,8 @@ export const useStore = defineStore('store', () => {
       await fetchProducts()
 
       await indexedDBService.saveProducts(state.products)
+      await indexedDBService.saveCurrency(currentCurrency.value)
+
     } catch(err){
       console.error('Failed to initialize store ', err)
       error.value = 'Failed to initialize store'
@@ -88,7 +90,7 @@ export const useStore = defineStore('store', () => {
     }
   }
 
-  const addToCart = (product: ProductTypes) => {
+  const addToCart = async (product: ProductTypes) => {
     const existingItem = state.cart.find(item => item.id === product.id)
     if (existingItem) {
       existingItem.quantity += 1
@@ -166,7 +168,21 @@ export const useStore = defineStore('store', () => {
     return state.cart
   })
 
+    const getCurrencyFromCache = async () => {
+    try {
+      const currency = await indexedDBService.getCurrency()
+      currentCurrency.value = currency
+    } catch(err){
+      console.error('Failed to get currency ', err)
+      error.value = 'Failed to get currency'
+    }
+  }
+
   const changeCurrency = async(newCurrency: string) => {
+    // open the index DB
+    await indexedDBService.openDB();
+    await indexedDBService.saveCurrency(newCurrency)
+
     if(newCurrency === currentCurrency.value) return
     currentCurrency.value = newCurrency
     await updatePrices(newCurrency)
@@ -206,6 +222,7 @@ export const useStore = defineStore('store', () => {
         }
         return item
       })
+      await indexedDBService.saveCartProducts(state.cart)
     } catch(err) {
       error.value = 'Failed to update prices';
       console.error('Failed to update prices:', err);
@@ -231,6 +248,7 @@ export const useStore = defineStore('store', () => {
     getCartFromCache,
     getCart,
     changeCurrency,
-    currentCurrency
+    currentCurrency,
+    getCurrencyFromCache
   }
 })

@@ -9,6 +9,7 @@ const store = useStore()
 
 onMounted(async() => {
   await store.getCartFromCache()
+  // await store.getCurrencyFromCache()
 })
 </script>
 

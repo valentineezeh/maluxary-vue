@@ -37,6 +37,7 @@ const handleSearch = (value: string) => {
 .search-container {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   height: 50%;
   width: 100%;
   background: #f5f5f3;
@@ -49,9 +50,8 @@ const handleSearch = (value: string) => {
 }
 
 .search-input {
-  float: right;
   align-content: center;
-  margin-right: 20px;
+  margin-right: 2rem;
   width: 20rem;
 }
 
@@ -66,5 +66,12 @@ input[type='text'] {
 
 .search-text {
   margin: 70px;
+}
+
+@media screen and (max-width: 480px) {
+  .search-input {
+    position: relative;
+    left: 12%;
+  }
 }
 </style>

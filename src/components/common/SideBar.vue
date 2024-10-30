@@ -47,6 +47,7 @@ const handleCurrencyChange = (event: Event) => {
 
 onMounted(async () => {
   await store.getCartFromCache()
+  await store.getCurrencyFromCache()
   document.addEventListener('mousedown', handleClickOutside)
   toggleBodyScroll(showSidePanel.value)
 })
