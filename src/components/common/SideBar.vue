@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import CartCard from '../CartCard.vue'
 import { useStore } from '@/stores'
+import Loader from './Loader.vue';
 
 // const props = defineProps<{
 //   showSidePanel: boolean
@@ -13,7 +14,7 @@ const sidePanelRef = ref<HTMLElement | null>(null)
 
 const store = useStore()
 const { setSidePanel } = store
-const { showSidePanel, currentCurrency } = storeToRefs(store)
+const { showSidePanel, currentCurrency, isSelectCurrencyLoading } = storeToRefs(store)
 
 const handleClickOutside = (event: MouseEvent) => {
   if (
@@ -74,8 +75,9 @@ onUnmounted(() => {
             <option value="NGN">NGN</option>
           </select>
         </div>
-        <div class="cart-product" v-for="item in store.getCart" :key="item.id">
-          <CartCard :product="item" />
+        <Loader v-if="isSelectCurrencyLoading" />
+        <div class="cart-product" v-else>
+          <CartCard v-for="item in store.getCart" :key="item.id" :product="item" />
         </div>
         <div class="cart-footer">
           <div>

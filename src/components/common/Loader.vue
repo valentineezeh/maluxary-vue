@@ -6,7 +6,7 @@
 
 <style lang="css" scoped>
   .loader-container {
-    display: flex;
+    display: flex !important;
     justify-content: center;
     align-items: center;
     height: 50vh;
@@ -15,7 +15,7 @@
   .loader {
     border: 16px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid #033762;
+    border-top: 16px solid #525850;
     width: 120px;
     height: 120px;
     -webkit-animation: spin 2s linear infinite;

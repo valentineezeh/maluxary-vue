@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CounterVue from './Counter.vue'
-import { ProductTypes } from '@/types'
+import type { ProductTypes } from '@/types'
 import { useStore } from '@/stores'
 
 const props = defineProps<{
@@ -13,8 +13,6 @@ const { removeFromCart } = store
 const handleRemoveFromCart = (product: ProductTypes) => {
   removeFromCart(product)
 }
-
-console.log('prop.product >>> ', props.product)
 </script>
 
 <template>

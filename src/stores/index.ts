@@ -17,6 +17,7 @@ export const useStore = defineStore('store', () => {
   const isLoading = ref(false)
   const error = ref('')
   const currentCurrency = ref('USD')
+  const isSelectCurrencyLoading = ref(false)
 
   const initializeStore = async() => {
     try {
@@ -36,7 +37,11 @@ export const useStore = defineStore('store', () => {
   const getProductsFromCache = async () => {
     try {
       const products = await indexedDBService.getProducts()
-      return state.products = products
+      if (!products || products.length === 0) {
+      throw new Error('No products found in cache');
+    }
+      state.products = products
+      return products
     } catch(err){
       console.error('Failed to get products ', err)
       error.value = 'Failed to get products'
@@ -55,6 +60,9 @@ export const useStore = defineStore('store', () => {
 
   const fetchProductsFromApi = async() => {
     try {
+      await indexedDBService.openDB();
+      const getCurrency = await indexedDBService.getCurrency()
+
       const res = await axios({
         url: `${baseUrl}/api/graphql`,
         method: "post",
@@ -65,7 +73,7 @@ export const useStore = defineStore('store', () => {
             id
             title
             image_url
-            price(currency: ${currentCurrency.value})
+            price(currency: ${getCurrency || currentCurrency.value})
           }
         }
         `,
@@ -189,9 +197,10 @@ export const useStore = defineStore('store', () => {
   }
 
   const updatePrices = async(newCurrency: string) => {
-    isLoading.value = true;
+    isSelectCurrencyLoading.value = true;
 
     try {
+      // fetch product prices base on selected currency
       const res = await axios({
         url: `${baseUrl}/api/graphql`,
         method: 'post',
@@ -214,6 +223,9 @@ export const useStore = defineStore('store', () => {
         return { ...prod, price: newPrice.price };
       })
 
+      // update products in indexedDB
+      await indexedDBService.saveProducts(state.products)
+
       // update prices in the cart items
       state.cart = state.cart.map(item => {
         const newPrice = newPrices.find((p: ProductTypes) => p.id === item.id)
@@ -222,12 +234,14 @@ export const useStore = defineStore('store', () => {
         }
         return item
       })
+
+      // update cart items in index db
       await indexedDBService.saveCartProducts(state.cart)
     } catch(err) {
       error.value = 'Failed to update prices';
       console.error('Failed to update prices:', err);
     } finally {
-      isLoading.value = false
+      isSelectCurrencyLoading.value = false
   }
 }
 
@@ -249,6 +263,9 @@ export const useStore = defineStore('store', () => {
     getCart,
     changeCurrency,
     currentCurrency,
-    getCurrencyFromCache
+    getCurrencyFromCache,
+    isLoading,
+    error,
+    isSelectCurrencyLoading
   }
 })
