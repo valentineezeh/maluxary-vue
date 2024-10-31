@@ -4,8 +4,6 @@ import { defineProps } from 'vue'
   const props = defineProps<{
     text: string
   }>()
-
-  console.log('props >>>>> ', props.text)
 </script>
 
 <template>

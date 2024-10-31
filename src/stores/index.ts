@@ -18,6 +18,7 @@ export const useStore = defineStore('store', () => {
   const error = ref('')
   const currentCurrency = ref('USD')
   const isSelectCurrencyLoading = ref(false)
+  const isSelectCurrencyError = ref('')
 
   const initializeStore = async() => {
     try {
@@ -54,7 +55,7 @@ export const useStore = defineStore('store', () => {
       state.cart = [...cart]
     } catch(err){
       console.error('Failed to get cart ', err)
-      error.value = 'Failed to get cart'
+      isSelectCurrencyError.value = 'Failed to get cart'
     }
   }
 
@@ -238,7 +239,7 @@ export const useStore = defineStore('store', () => {
       // update cart items in index db
       await indexedDBService.saveCartProducts(state.cart)
     } catch(err) {
-      error.value = 'Failed to update prices';
+      isSelectCurrencyError.value = 'Failed to update prices';
       console.error('Failed to update prices:', err);
     } finally {
       isSelectCurrencyLoading.value = false
@@ -266,6 +267,7 @@ export const useStore = defineStore('store', () => {
     getCurrencyFromCache,
     isLoading,
     error,
-    isSelectCurrencyLoading
+    isSelectCurrencyLoading,
+    isSelectCurrencyError
   }
 })
