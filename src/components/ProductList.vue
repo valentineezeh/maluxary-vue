@@ -11,10 +11,11 @@ const store = useStore()
 const { searchResults, isLoading, error } = storeToRefs(store)
 
 onMounted(async () => {
-  const cachedProd = await store.getProductsFromCache()
-  if (cachedProd && cachedProd.length === 0) {
-    store.initializeStore()
-  }
+  // const cachedProd = await store.getProductsFromCache()
+  // if (cachedProd && cachedProd.length === 0) {
+  //   store.initializeStore()
+  // }
+  store.initializeStore()
 })
 
 </script>

@@ -151,6 +151,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   margin: 20px;
+  gap: 30px;
 }
 .currency-selector-container {
   position: relative;
@@ -204,13 +205,13 @@ onUnmounted(() => {
 .sidepanel {
   position: fixed;
   z-index: 1;
-  height: 250px;
   top: 0;
   right: 0;
   background-color: #f2f2f0;
   overflow-y: auto;
   transition: 0.5s;
   height: 100%;
+  width: 50vh
 }
 
 .sidepanel a {
@@ -237,4 +238,11 @@ onUnmounted(() => {
   color: #727467;
   letter-spacing: 3px;
 }
+
+@media screen and (max-width: 480px) {
+  .sidepanel {
+    width: 100%;
+  }
+}
+
 </style>

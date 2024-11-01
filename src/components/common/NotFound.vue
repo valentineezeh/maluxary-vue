@@ -8,7 +8,7 @@ import { defineProps } from 'vue'
 
 <template>
   <div class="not-found-container">
-    <h1 style="color: #525850">{{ props.text }}.</h1>
+    <h1 style="color: #525850">{{ props.text || 'You are yet to add an item to the cart.' }}</h1>
   </div>
 </template>
 
@@ -23,6 +23,7 @@ import { defineProps } from 'vue'
 
 .not-found-container h1 {
   margin: 0;
+  text-align: center;
 }
 
 .not-found-container {

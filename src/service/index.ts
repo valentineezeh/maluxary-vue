@@ -5,6 +5,7 @@ const DB_VERSION = 1;
 const STORE_NAME = 'products';
 const CART_NAME = 'carts'
 const CURRENCY_NAME = 'currency'
+const METADATA = 'matadata'
 
 export const indexedDBService = {
   db: null as IDBDatabase | null,
@@ -35,6 +36,9 @@ export const indexedDBService = {
         }
         if (!db.objectStoreNames.contains(CURRENCY_NAME)) {
           db.createObjectStore(CURRENCY_NAME);
+        }
+        if(!db.objectStoreNames.contains(METADATA)){
+          db.createObjectStore(METADATA)
         }
       };
     });
@@ -206,5 +210,35 @@ export const indexedDBService = {
         reject(request.error);
       };
     })
-  }
+  },
+
+  async saveCachedTimeStamp(timeStamp: number): Promise<void> {
+    if (!this.db) {
+      throw new Error('Database is not initialized')
+      }
+      return new Promise((resolve, reject) => {
+        const transaction = this.db!.transaction(METADATA, 'readwrite');
+        const store = transaction.objectStore(METADATA);
+
+        const request = store.put(timeStamp, 'productsTimeStamp')
+
+        request.onsuccess = () => resolve()
+        request.onerror = () => reject(request.error)
+      })
+    },
+
+    async getCachedTimeStamp(): Promise<number> {
+      if (!this.db) {
+        throw new Error('Database is not initialized')
+      }
+      return new Promise((resolve, reject) => {
+        const transaction = this.db!.transaction(METADATA, 'readonly');
+        const store = transaction.objectStore(METADATA);
+
+        const request = store.get('productsTimeStamp')
+
+        request.onsuccess = () => resolve(request.result)
+        request.onerror = () => reject(request.error)
+      })
+    }
   }

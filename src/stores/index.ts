@@ -7,6 +7,8 @@ import { indexedDBService } from '@/service'
 const baseUrl = 'https://pangaea-interviews.now.sh'
 
 export const useStore = defineStore('store', () => {
+  const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
   const state = reactive<Store>({
     products: [],
     cart: [],
@@ -26,8 +28,8 @@ export const useStore = defineStore('store', () => {
       await indexedDBService.openDB();
       await fetchProducts()
 
-      await indexedDBService.saveProducts(state.products)
-      await indexedDBService.saveCurrency(currentCurrency.value)
+      // await indexedDBService.saveProducts(state.products)
+      // await indexedDBService.saveCurrency(currentCurrency.value)
 
     } catch(err){
       console.error('Failed to initialize store ', err)
@@ -35,17 +37,50 @@ export const useStore = defineStore('store', () => {
     }
   }
 
-  const getProductsFromCache = async () => {
+  const isCachedValid = (timeStamp: number): boolean => {
+    return Boolean(timeStamp && (Date.now() - timeStamp) < CACHE_DURATION);
+  }
+
+  const fetchProducts = async() => {
+    isLoading.value = true;
     try {
-      const products = await indexedDBService.getProducts()
-      if (!products || products.length === 0) {
-      throw new Error('No products found in cache');
-    }
-      state.products = products
-      return products
+      const [cachedData, cacheTimeStamp] = await Promise.all([
+        indexedDBService.getProducts(),
+        indexedDBService.getCachedTimeStamp(),
+      ])
+
+      if(cachedData.length && isCachedValid(cacheTimeStamp)) {
+        state.products = cachedData;
+        isLoading.value = false;
+        return
+      }
+
+      // if cache is invalid or empty, fetch fresh product
+      await refreshProduct()
     } catch(err){
-      console.error('Failed to get products ', err)
-      error.value = 'Failed to get products'
+      error.value = 'Failed to load product.'
+      isLoading.value = false
+      return err
+    }
+  }
+
+  const refreshProduct = async() => {
+    try {
+      const products = await fetchProductsFromApi();
+      if(products.data.products){
+        state.products = products.data.products;
+
+        // save both products and timestamp atomically
+        await Promise.all([
+          indexedDBService.saveProducts(products.data.products),
+          indexedDBService.saveCachedTimeStamp(Date.now())
+        ])
+      }
+    } catch(err) {
+      error.value = 'Failed to fetch products.'
+      return err
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -83,19 +118,6 @@ export const useStore = defineStore('store', () => {
       return res.data
     } catch(error){
       return error
-    }
-  }
-
-  const fetchProducts = async() => {
-    isLoading.value = true;
-    try {
-      const products = await fetchProductsFromApi();
-      state.products = products.data.products
-    } catch(err) {
-      error.value = 'Failed to fetch products';
-      console.error(err)
-    } finally {
-      isLoading.value = false;
     }
   }
 
@@ -259,7 +281,6 @@ export const useStore = defineStore('store', () => {
     searchValue,
     setSearchQuery,
     initializeStore,
-    getProductsFromCache,
     getCartFromCache,
     getCart,
     changeCurrency,
