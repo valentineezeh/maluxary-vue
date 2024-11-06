@@ -28,9 +28,6 @@ export const useStore = defineStore('store', () => {
       await indexedDBService.openDB();
       await fetchProducts()
 
-      // await indexedDBService.saveProducts(state.products)
-      // await indexedDBService.saveCurrency(currentCurrency.value)
-
     } catch(err){
       console.error('Failed to initialize store ', err)
       error.value = 'Failed to initialize store'
@@ -199,7 +196,7 @@ export const useStore = defineStore('store', () => {
     return state.cart
   })
 
-    const getCurrencyFromCache = async () => {
+  const getCurrencyFromCache = async () => {
     try {
       const currency = await indexedDBService.getCurrency()
       currentCurrency.value = currency
