@@ -1,7 +1,7 @@
-import { mount } from "@vue/test-utils";
-import App from "@/App.vue";
+import { mount } from '@vue/test-utils';
+import SideBar from '../common/SideBar.vue';
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { setActivePinia, createPinia } from 'pinia'
+import { setActivePinia, createPinia } from 'pinia';
 import 'fake-indexeddb/auto';
 
 describe("It  should render the app", () => {
@@ -19,7 +19,7 @@ describe("It  should render the app", () => {
   });
 
   it("renders component correctly", () => {
-    const wrapper = mount(App)
+    const wrapper = mount(SideBar)
     expect(wrapper.exists()).toBe(true);
   })
 })

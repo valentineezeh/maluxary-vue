@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { ProductTypes } from '@/types'
+import type { ProductTypes } from '@/types'
 import { useStore } from '@/stores'
 
 const props = defineProps<{

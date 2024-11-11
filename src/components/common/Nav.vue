@@ -15,7 +15,7 @@ const store = useStore()
     <div class="rightnav">
       <a href="#news">Account</a>
       <a href="#" @click="store.setSidePanel(true)" class="cart">
-        <i class="fa-solid fa-cart-shopping"></i>
+        <i class="fa-solid fa-cart-shopping" style="cursor: pointer;"></i>
         <span class="cartCount" v-if="store.cartItemCount > 0">{{
           store.cartItemCount
         }}</span>
