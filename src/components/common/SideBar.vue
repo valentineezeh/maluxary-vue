@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
+import { RouterLink } from 'vue-router';
 import CartCard from '../CartCard.vue'
 import { useStore } from '@/stores'
 import Loader from './Loader.vue';
@@ -95,8 +96,14 @@ onUnmounted(() => {
             <p>{{ store.cartSubtotal }}</p>
           </div>
           <div class="cart-btn">
-            <button class="sub-btn">MAKE THIS A SUBSCRIPTION (SAVE 20%)</button>
-            <button class="checkout-btn">PROCEED TO CHECKOUT</button>
+            <RouterLink :to="'#'">
+              <button class="sub-btn">MAKE THIS A SUBSCRIPTION (SAVE 20%)</button>
+            </RouterLink>
+            <RouterLink :to="{ path: '/checkout'}">
+              <button class="checkout-btn">
+                PROCEED TO CHECKOUT
+              </button>
+            </RouterLink>
           </div>
         </div>
         </div>
@@ -107,6 +114,12 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.cart-btn {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 20px;
+}
 .subtotal {
   display: flex;
   justify-content: space-between;
@@ -124,7 +137,7 @@ onUnmounted(() => {
   font-size: 14px;
   font-family: roboto;
   cursor: pointer;
-  width: 90%;
+  width: 100%;
   margin-top: 10px;
   font-weight: 500;
 }
@@ -140,7 +153,7 @@ onUnmounted(() => {
   font-size: 14px;
   font-family: roboto;
   cursor: pointer;
-  width: 90%;
+  width: 100%;
 }
 .cart-footer {
   display: flex;
@@ -215,7 +228,6 @@ onUnmounted(() => {
 }
 
 .sidepanel a {
-  padding: 8px 8px 8px 32px;
   text-decoration: none;
   font-size: 25px;
   color: #818181;
@@ -232,6 +244,7 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   font-size: 36px;
+  padding: 8px 8px 8px 8px;
 }
 .cart-header {
   text-align: center;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Home from './views/HomeView.vue'
+// import Home from './views/HomeView.vue'
 import Loader from './components/common/Loader.vue'
 </script>
 
@@ -9,7 +9,7 @@ import Loader from './components/common/Loader.vue'
       <Loader />
     </template>
     <template #default>
-      <Home />
+      <RouterView />
     </template>
   </Suspense>
 </template>

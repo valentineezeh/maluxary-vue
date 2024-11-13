@@ -50,10 +50,10 @@ export const useStore = defineStore('store', () => {
         state.products = cachedData;
         isLoading.value = false;
         return
+      } else {
+        // if cache is invalid or empty, fetch fresh product
+        await refreshProduct()
       }
-
-      // if cache is invalid or empty, fetch fresh product
-      await refreshProduct()
     } catch(err){
       error.value = 'Failed to load product.'
       isLoading.value = false
