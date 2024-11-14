@@ -12,6 +12,48 @@
     }
   ],
   "compilerOptions": {
-    "module": "NodeNext"
+    "baseUrl": ".",
+    "module": "es2022",
+    "composite": true,
+    "target": "es2022",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }
+
+// {
+//   "compilerOptions": {
+//     "baseUrl": ".",
+//     "target": "es2022",
+//     "lib": ["dom", "dom.iterable", "esnext"],
+//     "allowJs": true,
+//     "noImplicitAny": true,
+//     "skipLibCheck": true,
+//     "strict": true,
+//     "forceConsistentCasingInFileNames": true,
+//     // "incremental": true,
+//     "esModuleInterop": true,
+//     "module": "es2022",
+//     "moduleResolution": "node",
+//     "resolveJsonModule": true,
+//     "isolatedModules": true,
+//     "jsx": "preserve",
+//     "paths": {
+//       "@/*": ["src/*"]
+//     }
+//   },
+//   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "vite.config.ts"],
+//     "references": [
+//     {
+//       "path": "./tsconfig.node.json"
+//     },
+//     {
+//       "path": "./tsconfig.app.json"
+//     },
+//     {
+//       "path": "./tsconfig.vitest.json"
+//     }
+//   ],
+//   "exclude": ["node_modules"]
+// }

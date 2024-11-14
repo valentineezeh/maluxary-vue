@@ -1,11 +1,12 @@
 <script setup lang="ts">
 
-  type InputProps = {
-    input: object
+import { InputProps } from '../../hooks/useInputField'
+
+export type InputPropsType = {
+    input: InputProps
     placeholder: string
-    name: string
+    name?: string
     value: string
-    label?: string
     required?: boolean
     disabled?: boolean
     class?: string
@@ -13,18 +14,7 @@
     textErrorMessage: string
   }
 
-  const props = defineProps<InputProps>()
-
-  const emit = defineEmits<{
-  'update:value': [value: string]
-}>()
-
-const handleInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  emit('update:value', target.value)
-}
-
-  console.log('props >>>> ', props.value)
+  const props = defineProps<InputPropsType>()
 
 </script>
 
@@ -33,7 +23,6 @@ const handleInput = (event: Event) => {
     v-bind="props.input"
     :placeholder="props.placeholder"
     :value="props.value"
-    @input="handleInput"
     />
     <span v-if="props.textError" class="text-error">
       {{ props.textErrorMessage }}
@@ -48,5 +37,10 @@ const handleInput = (event: Event) => {
   border: 1px solid #ccc;
   box-sizing: border-box;
   width: 100%;
+  border-radius: 5px;
 }
+
+.text-error {
+    color: red;
+  }
 </style>

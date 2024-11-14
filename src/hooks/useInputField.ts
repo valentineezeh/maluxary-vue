@@ -118,7 +118,6 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
   const inputProps = {
     ...otherOptions,
     ref: inputRef,
-    name,
     value: state.value,
     checked: state.checked,
     onAnimationstart: onAnimationStart,
@@ -146,4 +145,16 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
     // Input props
     input: inputProps
   }
+}
+
+export type InputProps = {
+  type?: string;
+  name?: string;
+  id?: string;
+  value?: string;
+  checked?: boolean;
+  onAnimationstart?: () => void;
+  onChange?: (event: Event) => void;
+  onBlur?: (event: FocusEvent) => void;
+  onFocus?: (event: FocusEvent) => void;
 }

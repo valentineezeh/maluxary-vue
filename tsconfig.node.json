@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
   "include": [
+    "src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue",
     "vite.config.*",
     "vitest.config.*",
     "cypress.config.*",
@@ -8,12 +9,18 @@
     "playwright.config.*"
   ],
   "compilerOptions": {
+    "baseUrl": ".",
     "composite": true,
-    "noEmit": true,
+    // "noEmit": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "allowSyntheticDefaultImports": true,
+    "target": "es2022",
 
-    "module": "ESNext",
+    "module": "es2022",
     "moduleResolution": "Bundler",
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }

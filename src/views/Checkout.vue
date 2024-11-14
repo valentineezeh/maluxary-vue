@@ -1,6 +1,9 @@
 <script setup lang="ts">
-
+import Input from '@/components/common/Input.vue'
 import { useInputField } from '@/hooks/useInputField'
+import OrderLists from '@/components/OrderLists.vue';
+import Button from '@/components/common/Button.vue';
+
 
 const {
   input: emailInput,
@@ -11,7 +14,7 @@ const {
   type: 'email',
   placeholder: 'Enter your email',
   name: 'Email',
-  validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+  validate: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
 })
 
 const {
@@ -23,7 +26,7 @@ const {
   type: 'text',
   placeholder: 'First name',
   name: 'First name',
-  validate: (value) => value.trim().length !== 0,
+  validate: (value: string) => value.trim().length !== 0,
 })
 
 const {
@@ -35,7 +38,7 @@ const {
   type: 'text',
   placeholder: 'Last name',
   name: 'Last name',
-  validate: (value) => value.trim().length !== 0,
+  validate: (value: string) => value.trim().length !== 0,
 })
 
 const {
@@ -47,69 +50,161 @@ const {
   type: 'text',
   placeholder: 'Street address',
   name: 'Street address',
-  validate: (value) => value.trim().length !== 0,
+  validate: (value: string) => value.trim().length !== 0,
+})
+
+const {
+  input: cityInput,
+  value: cityValue,
+  isError: cityError,
+  placeholder: cityPlaceholder,
+} = useInputField('city', {
+  type: 'text',
+  placeholder: 'City',
+  name: 'City',
+  validate: (value: string) => value.trim().length !== 0,
+})
+
+const {
+  input: apartmentInput,
+  value: apartmentValue,
+  isError: apartmentError,
+  placeholder: apartmentPlaceholder,
+} = useInputField('apartment', {
+  type: 'text',
+  placeholder: 'Apartment, Suite, etc',
+  name: 'apartment',
+})
+
+const {
+  input: countryInput,
+  value: countryValue,
+  isError: countryError,
+  placeholder: countryPlaceholder,
+} = useInputField('country', {
+  type: 'text',
+  placeholder: 'Country',
+  name: 'country',
+  validate: (value: string) => value.trim().length !== 0,
+})
+
+const {
+  input: postcodeInput,
+  value: postcodeValue,
+  isError: postcodeError,
+  placeholder: postcodePlaceholder,
+} = useInputField('postcode', {
+  type: 'text',
+  placeholder: 'Postcode',
+  name: 'postcode',
+  validate: (value: string) => value.trim().length !== 0,
 })
 
 // watchEffect(() => {
 //   console.log('Value changed:', value.value, 'Valid:', isValid.value)
 // })
 
-const handleInputUpdate = (fieldName: string, value: string) => {
-  
-}
+// const handleInputUpdate = (fieldName: string, value: string) => {
+
+// }
 </script>
 
 <template>
   <div class="container">
     <div class="form">
-      <form>
+      <form @submit.prevent>
         <h3>Shipping Address</h3>
         <Input
           :input="emailInput"
           :placeholder="emailPlaceholder"
-          :value="emailValue"
+          :value="emailValue ?? ''"
           :textError="emailError"
           :textErrorMessage="'Please enter a valid email'"
         />
-        <!-- <span v-if="emailError" class="text-error">Please enter a valid email</span> -->
         <div class="form-group">
           <div class="form-input">
-            <input
-            v-bind="firstNameInput"
+            <Input
+            :input="firstNameInput"
             :placeholder="firstNamePlaceholder"
-            :value="firstNameValue"
+            :value="firstNameValue ?? ''"
+            :textError="firstNameError"
+            :textErrorMessage="'This field is required'"
           />
-          <span v-if="firstNameError" class="text-error">
-            This field is required
-          </span>
           </div>
           <div class="form-input">
-            <input
-            v-bind="lastNameInput"
-            :placeholder="lastNamePlaceholder"
-            :value="lastNameValue"
-          />
-          <span v-if="lastNameError" class="text-error">
-            This field is required
-          </span>
+            <Input
+              :input="lastNameInput"
+              :placeholder="lastNamePlaceholder"
+              :value="lastNameValue ?? ''"
+              :textError="lastNameError"
+              :textErrorMessage="'This field is required'"
+            />
           </div>
         </div>
-          <input
-              v-bind="addressInput"
-              :placeholder="addressPlaceholder"
-              :value="addressValue"
+          <Input
+            :input="addressInput"
+            :placeholder="addressPlaceholder"
+            :value="addressValue ?? ''"
+            :textError="addressError"
+            :textErrorMessage="'This field is required'"
             />
-        <input type="text" placeholder="Apartment, suite" />
-        <input type="text" placeholder="City" />
-        <input type="text" placeholder="Post code" />
-        <input type="text" placeholder="Country" />
-      </form>
+          <Input
+            :input="apartmentInput"
+            :placeholder="apartmentPlaceholder"
+            :value="apartmentValue ?? ''"
+            :textError="apartmentError"
+            :textErrorMessage="'This field is required'"
+            />
+          <Input
+            :input="cityInput"
+            :placeholder="cityPlaceholder"
+            :value="cityValue ?? ''"
+            :textError="cityError"
+            :textErrorMessage="'This field is required'"
+            />
+          <Input
+            :input="postcodeInput"
+            :placeholder="postcodePlaceholder"
+            :value="postcodeValue ?? ''"
+            :textError="postcodeError"
+            :textErrorMessage="'This field is required'"
+            />
+          <Input
+            :input="countryInput"
+            :placeholder="countryPlaceholder"
+            :value="countryValue ?? ''"
+            :textError="countryError"
+            :textErrorMessage="'This field is required'"
+            />
 
+            <div class="policy">
+              <input class="form-check-input" type="checkbox"/>
+              I agree to receive marketing emails about new products and promotions. View our privacy policy $ terms of service.
+            </div>
+            <Button
+              :text="'Confirm shipping information'"
+              :customStyle="{
+                color: 'white',
+                backgroundColor: '#525850',
+                marginTop: '20px',
+              }"
+              />
+      </form>
     </div>
+      <OrderLists  />
   </div>
 </template>
 
 <style lang="css" scoped>
+.policy {
+  display: grid;
+  grid-template-columns: 1fr 10fr;
+}
+
+.form-check-input{
+  height: 20px;
+}
+
   h1 {
     text-align: center;
   }
@@ -120,15 +215,15 @@ const handleInputUpdate = (fieldName: string, value: string) => {
   }
   .container {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
+    justify-content: space-evenly;
+    gap: 50px;
+    margin: 3rem;
   }
 
   .form {
     display: flex;
     flex-direction: column;
-    margin: 5rem;;
-    width: 50%;
+    width: 40%;
   }
 
   .form-group {
@@ -137,12 +232,12 @@ const handleInputUpdate = (fieldName: string, value: string) => {
   }
 
   input {
-  padding: 19px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  width: 100%;
+    padding: 19px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .text-error {

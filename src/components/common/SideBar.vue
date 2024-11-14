@@ -6,6 +6,7 @@ import CartCard from '../CartCard.vue'
 import { useStore } from '@/stores'
 import Loader from './Loader.vue';
 import NotFound from './NotFound.vue';
+import Button from '@/components/common/Button.vue';
 
 // const props = defineProps<{
 //   showSidePanel: boolean
@@ -97,12 +98,22 @@ onUnmounted(() => {
           </div>
           <div class="cart-btn">
             <RouterLink :to="'#'">
-              <button class="sub-btn">MAKE THIS A SUBSCRIPTION (SAVE 20%)</button>
+              <Button
+                :text="'MAKE THIS A SUBSCRIPTION (SAVE 20%)'"
+                :customStyle="{
+                  color: 'black',
+                  backgroundColor: 'white',
+                }"
+              />
             </RouterLink>
             <RouterLink :to="{ path: '/checkout'}">
-              <button class="checkout-btn">
-                PROCEED TO CHECKOUT
-              </button>
+              <Button
+                :text="'PROCEED TO CHECKOUT'"
+                :customStyle="{
+                  color: 'white',
+                  backgroundColor: '#525850',
+                }"
+              />
             </RouterLink>
           </div>
         </div>
@@ -119,41 +130,13 @@ onUnmounted(() => {
   justify-content: center;
   flex-direction: column;
   margin: 20px;
+  gap: 20px;
 }
 .subtotal {
   display: flex;
   justify-content: space-between;
   margin-left: 25px;
   margin-right: 30px;
-}
-.checkout-btn {
-  background-color: #525850;
-  border: 1px solid #ccc;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  font-family: roboto;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-  font-weight: 500;
-}
-.sub-btn {
-  font-weight: 500;
-  background-color: white;
-  border: 1px solid #ccc;
-  color: black;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  font-family: roboto;
-  cursor: pointer;
-  width: 100%;
 }
 .cart-footer {
   display: flex;
