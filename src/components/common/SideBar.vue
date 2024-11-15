@@ -113,6 +113,7 @@ onUnmounted(() => {
                   color: 'white',
                   backgroundColor: '#525850',
                 }"
+                :click="() => setSidePanel(false)"
               />
             </RouterLink>
           </div>

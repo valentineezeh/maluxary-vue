@@ -1,13 +1,15 @@
 <script setup lang="ts">
   defineProps<{
     text: string;
-    customStyle: Record<string, string>
+    customStyle: Record<string, string>;
+    click?: (value: boolean) => boolean
   }>()
 </script>
 
 <template>
   <button class="btn"
     :style="customStyle"
+    @click="click"
   >
     {{ text }}
   </button>

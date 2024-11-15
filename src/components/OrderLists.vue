@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import OrderItem from './OrderItem.vue';
 import { useStore } from '@/stores';
+import Button from '@/components/common/Button.vue';
 
 const store = useStore()
+
+const tax = (store.cartSubtotal * 5) / 100
+const total = store.cartSubtotal + tax
 
 </script>
 
@@ -19,18 +23,26 @@ const store = useStore()
         <p class="subtotal-text">Subtotal</p>
         <p>{{ store.cartSubtotal }}</p>
       </div>
-      <div class="subtotal-price">
+      <!-- <div class="subtotal-price">
         <p class="subtotal-text">Shipping</p>
         <p>Not available at the moment</p>
-      </div>
+      </div> -->
       <div class="subtotal-price">
         <p class="subtotal-text">Tax</p>
         <p>5%</p>
       </div>
       <div class="subtotal-price">
         <p class="subtotal-text">Total</p>
-        <p>5%</p>
+        <p>{{ total }}</p>
       </div>
+      <Button
+        :text="'Confirm order'"
+        :disabled="store.getCart.length === 0"
+        :customStyle="{
+          color: 'white',
+          backgroundColor: '#525850',
+        }"
+      />
     </div>
     </div>
   </div>

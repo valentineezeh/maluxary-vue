@@ -184,8 +184,8 @@ const {
             <Button
               :text="'Confirm shipping information'"
               :customStyle="{
-                color: 'white',
-                backgroundColor: '#525850',
+                color: 'black',
+                backgroundColor: '#fff',
                 marginTop: '20px',
               }"
               />
