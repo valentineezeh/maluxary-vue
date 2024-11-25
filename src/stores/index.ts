@@ -150,6 +150,13 @@ export const useStore = defineStore('store', () => {
     )
   })
 
+  const cartTotal = computed(() => {
+    return state.cart.reduce(
+      (total, item) => total + (item.unitPrice * item.quantity * 1.05),
+      0,
+    )
+  })
+
   const cartItemCount = computed(() => {
     return state.cart.reduce((count, item) => count + item.quantity, 0)
   })
@@ -286,6 +293,7 @@ export const useStore = defineStore('store', () => {
     isLoading,
     error,
     isSelectCurrencyLoading,
-    isSelectCurrencyError
+    isSelectCurrencyError,
+    cartTotal
   }
 })

@@ -8,118 +8,175 @@ import Button from '@/components/common/Button.vue';
 const {
   input: emailInput,
   value: emailValue,
-  isError: emailError,
   placeholder: emailPlaceholder,
+  required: emailRequired,
+  validateField: emailValidate,
+  errorMessage: emailErrorMessage,
+  isDirty: emailIsDirty,
+  isValid: emailIsValid
 } = useInputField('email', {
   type: 'email',
   placeholder: 'Enter your email',
   name: 'Email',
-  validate: (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+  required: true,
 })
 
 const {
   input: firstNameInput,
   value: firstNameValue,
-  isError: firstNameError,
   placeholder: firstNamePlaceholder,
+  required: firstNameRequired,
+  validateField: firstNameValidate,
+  errorMessage: firstNameErrorMessage,
+  isDirty: firstNameIsDirty,
+  isValid: firstNameIsValid
 } = useInputField('firstname', {
   type: 'text',
   placeholder: 'First name',
   name: 'First name',
-  validate: (value: string) => value.trim().length !== 0,
+  required: true,
 })
 
 const {
   input: lastNameInput,
   value: lastNameValue,
-  isError: lastNameError,
   placeholder: lastNamePlaceholder,
+  required: lastNameRequired,
+  validateField: lastNameValidate,
+  errorMessage: lastNameErrorMessage,
+  isDirty: lastNameIsDirty,
+  isValid: lastNameIsValid
 } = useInputField('lastname', {
   type: 'text',
   placeholder: 'Last name',
   name: 'Last name',
-  validate: (value: string) => value.trim().length !== 0,
+  required: true
 })
 
 const {
   input: addressInput,
   value: addressValue,
-  isError: addressError,
   placeholder: addressPlaceholder,
+  required: addressRequired,
+  validateField: addressValidate,
+  errorMessage: addressErrorMessage,
+  isDirty: addressIsDirty,
+  isValid: addressIsValid
 } = useInputField('address', {
   type: 'text',
   placeholder: 'Street address',
   name: 'Street address',
-  validate: (value: string) => value.trim().length !== 0,
+  required: true,
 })
 
 const {
   input: cityInput,
   value: cityValue,
-  isError: cityError,
   placeholder: cityPlaceholder,
+  required: cityRequired,
+  validateField: cityValidate,
+  errorMessage: cityErrorMessage,
+  isDirty: cityIsDirty,
+  isValid: cityIsValid
 } = useInputField('city', {
   type: 'text',
   placeholder: 'City',
   name: 'City',
-  validate: (value: string) => value.trim().length !== 0,
+  required: true,
 })
 
 const {
   input: apartmentInput,
   value: apartmentValue,
-  isError: apartmentError,
   placeholder: apartmentPlaceholder,
 } = useInputField('apartment', {
   type: 'text',
   placeholder: 'Apartment, Suite, etc',
-  name: 'apartment',
+  name: 'Apartment',
+  required: false
 })
 
 const {
   input: countryInput,
   value: countryValue,
-  isError: countryError,
   placeholder: countryPlaceholder,
+  required: countryRequired,
+  validateField: countryValidate,
+  errorMessage: countryErrorMessage,
+  isDirty: countryIsDirty,
+  isValid: countryIsValid
 } = useInputField('country', {
   type: 'text',
   placeholder: 'Country',
   name: 'country',
-  validate: (value: string) => value.trim().length !== 0,
+  required: true,
 })
 
 const {
   input: postcodeInput,
   value: postcodeValue,
-  isError: postcodeError,
   placeholder: postcodePlaceholder,
+  required: postcodeRequired,
+  validateField: postcodeValidate,
+  errorMessage: postcodeErrorMessage,
+  isDirty: postcodeIsDirty,
+  isValid: postcodeIsValid
 } = useInputField('postcode', {
   type: 'text',
   placeholder: 'Postcode',
   name: 'postcode',
-  validate: (value: string) => value.trim().length !== 0,
+  required: true,
 })
 
-// watchEffect(() => {
-//   console.log('Value changed:', value.value, 'Valid:', isValid.value)
-// })
+const {
+  input: policyInput,
+  value: policyValue,
+  placeholder: policyPlaceholder,
+  required: policyRequired,
+  validateField: policyValidate,
+  errorMessage: policyErrorMessage,
+  isDirty: policyIsDirty,
+  isValid: policyIsValid
+} = useInputField('policy', {
+  type: 'checkbox',
+  name: 'policy',
+  required: true,
+})
 
-// const handleInputUpdate = (fieldName: string, value: string) => {
+const onSubmit = () => {
+  const validations = {
+    email: emailValidate(emailValue.value),
+    firstName: firstNameValidate(firstNameValue.value),
+    lastName: lastNameValidate(lastNameValue.value),
+    address: addressValidate(addressValue.value),
+    city: cityValidate(cityValue.value),
+    country: countryValidate(countryValue.value),
+    postcode: postcodeValidate(postcodeValue.value),
+  }
 
-// }
+  console.log('policyValue >>>>> ', policyValue.value)
+
+  const isFormValid = Object.values(validations).every((isValid) => isValid)
+
+  if(isFormValid){
+    console.log('>>>>> on Submit <<<<< ')
+  }
+}
 </script>
 
 <template>
   <div class="container">
     <div class="form">
-      <form @submit.prevent>
+      <form @submit.prevent="onSubmit">
         <h3>Shipping Address</h3>
         <Input
           :input="emailInput"
           :placeholder="emailPlaceholder"
           :value="emailValue ?? ''"
-          :textError="emailError"
-          :textErrorMessage="'Please enter a valid email'"
+          :label="'Email'"
+          :required="emailRequired"
+          :textError="emailIsDirty && !emailIsValid"
+          :textErrorMessage="emailErrorMessage"
         />
         <div class="form-group">
           <div class="form-input">
@@ -127,8 +184,10 @@ const {
             :input="firstNameInput"
             :placeholder="firstNamePlaceholder"
             :value="firstNameValue ?? ''"
-            :textError="firstNameError"
-            :textErrorMessage="'This field is required'"
+            :textError="firstNameIsDirty && !firstNameIsValid"
+            :textErrorMessage="firstNameErrorMessage"
+            :label="'First name'"
+            :required="firstNameRequired"
           />
           </div>
           <div class="form-input">
@@ -136,8 +195,10 @@ const {
               :input="lastNameInput"
               :placeholder="lastNamePlaceholder"
               :value="lastNameValue ?? ''"
-              :textError="lastNameError"
-              :textErrorMessage="'This field is required'"
+              :textError="lastNameIsDirty && !lastNameIsValid"
+              :textErrorMessage="lastNameErrorMessage"
+              :label="'Last name'"
+              :required="lastNameRequired"
             />
           </div>
         </div>
@@ -145,41 +206,59 @@ const {
             :input="addressInput"
             :placeholder="addressPlaceholder"
             :value="addressValue ?? ''"
-            :textError="addressError"
-            :textErrorMessage="'This field is required'"
-            />
-          <Input
-            :input="apartmentInput"
-            :placeholder="apartmentPlaceholder"
-            :value="apartmentValue ?? ''"
-            :textError="apartmentError"
-            :textErrorMessage="'This field is required'"
+            :textError="addressIsDirty && !addressIsValid"
+            :textErrorMessage="addressErrorMessage"
+            :label="'Address'"
+            :required="addressRequired"
             />
           <Input
             :input="cityInput"
             :placeholder="cityPlaceholder"
             :value="cityValue ?? ''"
-            :textError="cityError"
-            :textErrorMessage="'This field is required'"
+            :textError="cityIsDirty && !cityIsValid"
+            :textErrorMessage="cityErrorMessage"
+            :label="'City'"
+            :required="cityRequired"
+            />
+          <Input
+            :input="apartmentInput"
+            :placeholder="apartmentPlaceholder"
+            :value="apartmentValue ?? ''"
+            :label="'Apartment'"
             />
           <Input
             :input="postcodeInput"
             :placeholder="postcodePlaceholder"
             :value="postcodeValue ?? ''"
-            :textError="postcodeError"
-            :textErrorMessage="'This field is required'"
+            :textError="postcodeIsDirty && !postcodeIsValid"
+            :textErrorMessage="postcodeErrorMessage"
+            :label="'Postcode'"
+            :required="postcodeRequired"
             />
           <Input
             :input="countryInput"
             :placeholder="countryPlaceholder"
             :value="countryValue ?? ''"
-            :textError="countryError"
-            :textErrorMessage="'This field is required'"
+            :textError="countryIsDirty && !countryIsValid"
+            :textErrorMessage="countryErrorMessage"
+            :label="'Country'"
+            :required="countryRequired"
             />
 
             <div class="policy">
-              <input class="form-check-input" type="checkbox"/>
-              I agree to receive marketing emails about new products and promotions. View our privacy policy $ terms of service.
+              <Input
+                :input="policyInput"
+                :value="policyValue"
+                :textError="policyIsDirty && !policyIsValid"
+                :textErrorMessage="policyErrorMessage"
+                :customStyle="{
+                  height: '15px',
+                  width: '15px',
+                }"
+                />
+              <p>
+                I agree to receive marketing emails about new products and promotions. View our privacy policy and terms of service.
+              </p>
             </div>
             <Button
               :text="'Confirm shipping information'"
@@ -196,10 +275,21 @@ const {
 </template>
 
 <style lang="css" scoped>
-.policy {
+/* .policy {
   display: grid;
-  grid-template-columns: 1fr 10fr;
+  justify-items: center;
+  align-items: center;
+  grid-template-columns: 1fr minmax(100px, 1fr);
+  grid-gap: 10px;
+} */
+
+.policy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
+
 
 .form-check-input{
   height: 20px;

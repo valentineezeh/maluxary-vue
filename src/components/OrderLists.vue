@@ -5,9 +5,6 @@ import Button from '@/components/common/Button.vue';
 
 const store = useStore()
 
-const tax = (store.cartSubtotal * 5) / 100
-const total = store.cartSubtotal + tax
-
 </script>
 
 <template>
@@ -33,7 +30,7 @@ const total = store.cartSubtotal + tax
       </div>
       <div class="subtotal-price">
         <p class="subtotal-text">Total</p>
-        <p>{{ total }}</p>
+        <p>{{ store.cartTotal }}</p>
       </div>
       <Button
         :text="'Confirm order'"

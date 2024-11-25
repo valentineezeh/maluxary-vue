@@ -8,7 +8,8 @@ interface InputFieldState<Value = string> {
   isBlurred: boolean
   isFocused: boolean
   isValid: boolean
-  value: Value | null
+  value: Value | null,
+  errorMessage: string
 }
 
 interface InputFieldOptions<Value = string> {
@@ -22,19 +23,20 @@ interface InputFieldOptions<Value = string> {
   onFocus?: (event: FocusEvent) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
+  required?: boolean
 }
 
 export function useInputField<Value = string>(name = '', options: InputFieldOptions<Value> = {}) {
   const inputRef = ref<HTMLInputElement | null>(null)
 
   const inputOptions = {
-    type: name.toLowerCase().includes('password') ? 'password' : 'text',
+    type: name.toLowerCase().includes('password') ? 'password' : options.type,
     id: name,
     name,
     defaultChecked: false,
     placeholder: '',
-    validate: (value: Value) => !!value,
-    ...options
+    validate: (value: Value) => validateField(value as string),
+    ...options,
   }
 
   const {
@@ -45,8 +47,10 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
     defaultValue,
     validate,
     placeholder,
+    required,
     ...otherOptions
   } = inputOptions
+
 
   const isRadioOrCheckbox = ['radio', 'checkbox'].includes(inputOptions.type)
 
@@ -57,10 +61,39 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
     isBlurred: false,
     isFocused: false,
     isValid: true,
-    value: defaultValue || null
+    value: defaultValue,
+    errorMessage: ''
   })
 
-  const isError = computed(() => !state.isValid && state.isDirty)
+  const validateField = (fieldValue: string) => {
+
+    // Check for empty field first
+    if(required) {
+      if (fieldValue === null || fieldValue === undefined || (typeof fieldValue === 'string' && fieldValue.trim() === '')) {
+      state.isValid = false
+      state.isDirty = true
+      state.errorMessage = `${options.name} is required`;
+      return false;
+    }
+    }
+
+    // Then check format validation
+    if (options.type === 'email') {
+      const validateEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fieldValue)
+      if(!validateEmail){
+        state.isValid = false
+        state.isDirty = true
+        state.errorMessage = `Please enter a valid ${options.name.toLowerCase()}`;
+        return false;
+      }
+    }
+
+    // Clear error if validation passes
+    state.isValid = true
+    state.isDirty = false
+    state.errorMessage = '';
+    return true;
+  };
 
   const onAnimationStart = (event: AnimationEvent) => {
     if (event.animationName === 'onAutoFillStart') {
@@ -83,6 +116,7 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
     state.value = value as UnwrapRef<Value>
     state.isDirty = true
     state.isValid = validate(value)
+    validateField(value as string)
   }
 
   const setIsValid = (valid: boolean) => {
@@ -107,6 +141,11 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
   const handleBlur = (event: FocusEvent) => {
     state.isBlurred = true
     state.isFocused = false
+
+    if (state.value !== null) {
+      validateField(state.value as string)
+    }
+
     onBlur?.(event)
   }
 
@@ -133,10 +172,12 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
     isValid: computed(() => state.isValid),
     isBlurred: computed(() => state.isBlurred),
     isFocused: computed(() => state.isFocused),
-    isError,
+    errorMessage: computed(() => state.errorMessage),
     checked: computed(() => state.checked),
     autoFilled: computed(() => state.autoFilled),
     placeholder,
+    validateField,
+    required,
 
     // Methods
     set: setValue,

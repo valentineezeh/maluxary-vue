@@ -2,12 +2,13 @@
   defineProps<{
     text: string;
     customStyle: Record<string, string>;
-    click?: (value: boolean) => boolean
+    click?: () => void
   }>()
 </script>
 
 <template>
-  <button class="btn"
+  <button
+    class="btn"
     :style="customStyle"
     @click="click"
   >
