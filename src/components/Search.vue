@@ -41,6 +41,7 @@ const handleSearch = (value: string) => {
   width: 100%;
   background: #f5f5f3;
   justify-content: space-between;
+  padding-top: 30px;
 }
 .search-container h1 {
   font-family: 'Oxygen';
@@ -67,10 +68,20 @@ input[type='text'] {
   margin: 70px;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 760px) {
+
+  .search-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0 20px 0px;
+  }
+
+
   .search-input {
-    position: relative;
-    left: 12%;
+    align-content: center;
+    margin-right: 0rem;
+    width: 20rem;
   }
 }
 </style>

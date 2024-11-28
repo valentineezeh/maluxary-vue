@@ -65,6 +65,7 @@ const store = useStore()
 }
 .main-container{
   width: 45%;
+  margin-top: 40px;
 }
 
 .cartCountContainer {
@@ -86,6 +87,10 @@ const store = useStore()
   display: flex;
   flex-direction: column;
   border-radius: 5px;
-  /* padding: 10px; */
+}
+@media (max-width: 768px) {
+  .main-container {
+    width: 100%;
+  }
 }
 </style>

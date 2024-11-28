@@ -125,18 +125,24 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
 
   const handleChange = (event: Event) => {
     const target = event.target as HTMLInputElement
-    const newValue = target.value as unknown as Value
+    let newValue: Value
     const checked = target.checked
 
-    const isInputValid = isRadioOrCheckbox ? !!checked : !!newValue
+    if (isRadioOrCheckbox) {
+      newValue = checked as unknown as Value
+      state.checked = checked
+    } else {
+      newValue = target.value as unknown as Value
+    }
 
     state.value = newValue as UnwrapRef<Value>
-    state.checked = checked
     state.isDirty = true
-    state.isValid = validate(newValue) //isInputValid
+    state.isValid = validate(newValue)
 
-    onChange?.(event, newValue, isInputValid)
+    validateField(newValue as string)
+    onChange?.(event, newValue, state.isValid)
   }
+
 
   const handleBlur = (event: FocusEvent) => {
     state.isBlurred = true
@@ -183,6 +189,7 @@ export function useInputField<Value = string>(name = '', options: InputFieldOpti
     set: setValue,
     setIsValid,
     reset,
+    handleChange,
     // Input props
     input: inputProps
   }

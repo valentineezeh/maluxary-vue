@@ -6,7 +6,7 @@ export type InputPropsType = {
     input?: InputProps
     placeholder?: string
     name?: string
-    value?: string
+    value?: string | boolean | number
     required?: boolean
     disabled?: boolean
     class?: string
@@ -17,6 +17,7 @@ export type InputPropsType = {
       [key: string]: string | undefined;
     }
     label?: string
+    checked?: boolean
   }
 
   const props = defineProps<InputPropsType>()
@@ -25,7 +26,7 @@ export type InputPropsType = {
 </script>
 
 <template>
-  <div class="label" v-if="props.type !== 'checkbox'">
+  <div class="label" v-if="props.type !== 'checkbox' && props.type !== 'radio'">
     {{ label }}
     <span class="required" v-if="props.required">*</span>
   </div>
@@ -35,6 +36,8 @@ export type InputPropsType = {
     :value="props.value"
     :style="props.customStyle"
     :class="{'error-border': textError}"
+    :checked="props.checked"
+    @change="props.input?.onChange"
     />
     <span v-if="props.textError" class="text-error">
       {{ props.textErrorMessage }}

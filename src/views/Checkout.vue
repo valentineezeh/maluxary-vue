@@ -131,16 +131,19 @@ const {
 const {
   input: policyInput,
   value: policyValue,
-  placeholder: policyPlaceholder,
-  required: policyRequired,
-  validateField: policyValidate,
   errorMessage: policyErrorMessage,
   isDirty: policyIsDirty,
-  isValid: policyIsValid
+  isValid: policyIsValid,
+  checked: termsChecked,
 } = useInputField('policy', {
   type: 'checkbox',
   name: 'policy',
   required: true,
+  onChange: (e: Event) => {
+    policyValue.value = (e.target as HTMLInputElement).checked
+
+    console.log('policyValue.value >>>> ', policyValue.value)
+  }
 })
 
 const onSubmit = () => {
@@ -153,8 +156,6 @@ const onSubmit = () => {
     country: countryValidate(countryValue.value),
     postcode: postcodeValidate(postcodeValue.value),
   }
-
-  console.log('policyValue >>>>> ', policyValue.value)
 
   const isFormValid = Object.values(validations).every((isValid) => isValid)
 
@@ -314,6 +315,7 @@ const onSubmit = () => {
     display: flex;
     flex-direction: column;
     width: 40%;
+    margin-bottom: 50px;
   }
 
   .form-group {
@@ -332,5 +334,15 @@ const onSubmit = () => {
 
   .text-error {
     color: red;
+  }
+  @media (max-width: 768px) {
+    .container {
+      margin: 0;
+      padding: 20px 20px;
+      flex-wrap:wrap-reverse;
+    }
+    .form {
+      width: 100%;
+    }
   }
 </style>
