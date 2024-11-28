@@ -36,11 +36,14 @@ const store = useStore()
         <ul v-show="mobileNav" class="dropdown-nav">
           <li><a href="#account">Account</a></li>
           <li>
-          <a href="#about" @click="() => store.setSidePanel(true)" class="cart">
+          <a href="#about" @click="() => {
+            store.setSidePanel(true)
+            toggleMobileNav()
+            }" class="cart">
           <i class="fa-solid fa-cart-shopping" />
-          <span class="cartCount" v-if="store.cartItemCount > 0">{{
-          store.cartItemCount
-        }}</span>
+          <span class="cartCount" v-if="store.cartItemCount > 0">
+            {{ store.cartItemCount }}
+        </span>
         </a></li>
         </ul>
       </transition>
