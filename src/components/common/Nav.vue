@@ -1,19 +1,10 @@
 
 <script setup lang="ts">
-import {  watch } from 'vue'
 import { useStore } from '@/stores'
 import { useNavigation } from '@/hooks/useNavigation';
 
 const { scrolledNav, mobile, mobileNav, toggleMobileNav } = useNavigation()
 const store = useStore()
-
-watch(mobileNav, (newValue) => {
-  console.log('mobileNav >>>> ', newValue)
-}, { immediate: true })
-
-// watch(scrolledNav, () => {
-//   console.log('scrolledNav >>>> ', scrolledNav.value)
-// })
 </script>
 
 <template>
@@ -99,11 +90,12 @@ header.scrolled-nav nav .cartCount {
 nav {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   transition: 0.5s ease all;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   padding: 15px;
-  @media (min-width: 1140px) {
-    max-width: 1140px;
+  @media (min-width: 1740px) {
+    max-width: 1740px;
   }
 }
 
@@ -115,10 +107,8 @@ nav {
 }
 
 .navigation {
-  flex: 2;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
 }
 
 .navigation li {

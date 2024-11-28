@@ -1,4 +1,3 @@
-// composables/useNavigation.ts
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 
 export function useNavigation() {
